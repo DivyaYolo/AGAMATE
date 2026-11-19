@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./config/database.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import multer from "multer";
+import searchRoutes from "./routes/searchRoutes.js";
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ app.use(cors({
 app.use(express.json());
 
 app.use("/api/documents", documentRoutes);
+
+app.use("/api/search", searchRoutes);
 
 // Root route
 app.get("/", (req, res) => {
