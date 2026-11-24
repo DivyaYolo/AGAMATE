@@ -1,6 +1,5 @@
 import Document from "../models/Document.js";
 import DocumentChunk from "../models/DocumentChunk.js";
-
 import extractText from "../services/documentService.js";
 import splitIntoChunks from "../services/chunkService.js";
 import generateEmbedding from "../services/embeddingService.js";
@@ -38,7 +37,6 @@ export const uploadDocument = async (req, res) => {
             chunkRecords.push({
                 content: chunks[i],
                 embedding,
-
                 source: {
                     filename: file.originalname,
                     mimeType: file.mimetype,
@@ -63,8 +61,8 @@ export const uploadDocument = async (req, res) => {
             }));
 
             await DocumentChunk.insertMany(recordsToInsert);
+
         } catch (error) {
-            // Avoid leaving a document record without its chunks.
             await Document.deleteOne({ _id: document._id });
             throw error;
         }
@@ -72,7 +70,6 @@ export const uploadDocument = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "Document uploaded and processed successfully.",
-
             document: {
                 id: document._id,
                 filename: document.originalName,
@@ -87,6 +84,29 @@ export const uploadDocument = async (req, res) => {
             success: false,
             message: "Document processing failed.",
             error: error.message
+        });
+    }
+};
+
+
+// Get all uploaded documents
+export const getDocuments = async (req, res) => {
+    try {
+        const documents = await Document.find()
+            .sort({ uploadedAt: -1 })
+            .select("originalName mimeType fileSize totalChunks uploadedAt");
+
+        return res.status(200).json({
+            success: true,
+            documents
+        });
+
+    } catch (error) {
+        console.error("Fetch documents error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch documents."
         });
     }
 };
