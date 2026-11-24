@@ -5,6 +5,7 @@ import connectDB from "./config/database.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import multer from "multer";
 import searchRoutes from "./routes/searchRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ app.use(express.json());
 app.use("/api/documents", documentRoutes);
 
 app.use("/api/search", searchRoutes);
+
+app.use("/api/chat", chatRoutes);
 
 // Root route
 app.get("/", (req, res) => {
